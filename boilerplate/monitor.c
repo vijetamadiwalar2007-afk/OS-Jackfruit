@@ -25,7 +25,7 @@
 #include <linux/timer.h>
 #include <linux/uaccess.h>
 #include <linux/version.h>
-
+#include <linux/jiffies.h>
 #include "monitor_ioctl.h"
 
 #define DEVICE_NAME "container_monitor"
@@ -245,7 +245,7 @@ static int __init monitor_init(void)
 /* --- Provided: Module Exit --- */
 static void __exit monitor_exit(void)
 {
-    del_timer_sync(&monitor_timer);
+    timer_shutdown_sync(&monitor_timer);
 
     /* ==============================================================
      * TODO 6: Free all remaining monitored entries.
