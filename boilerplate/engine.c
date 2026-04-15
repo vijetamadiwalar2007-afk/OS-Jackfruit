@@ -1,67 +1,107 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/wait.h>
+#include <errno.h>
+#include <signal.h>
+#include <time.h>
 #include <fcntl.h>
-void run_supervisor(const char *rootfs){
-    printf("Supervisor started with rootfs: %s\n", rootfs);
-    while(1){
-    sleep(10);
-    }
-    }
-void start_container(const char *id,const char *rootfs,const char *cmd){
-    pid_t pid = fork();
-if (pid == 0) {
-chroot(rootfs);
-chdir("/");
-execl(cmd, cmd, NULL);
-perror("exec failed");
-exit(1);
-}else{
-    printf("started container %s with PID %d\n",id ,pid);
-    }
-  }
-   void show_ps(){
-        
-        system( "ls /tmp/jackfruit/containers/");
-} 
-      void stop_container(const char *id){
-      char path[256];
-      snprintf(path,sizeof(path), "/tmp/jackfruit/containers/%s/pid", id);
-      int fd = open(path,O_RDONLY);
-      if(fd < 0){ printf("Container not  found\n"); return;}
-      char buf[32]={0};
-      read(fd,buf,sizeof(buf));
-      close(fd);
-      pid_t pid = atoi(buf);
-      kill(pid,  SIGTERM);
-      char cmd[256];
-      snprintf(cmd, sizeof(cmd), "rm-rf /tmp/jackfruit/containers/%s", id);
-     system(cmd);
-     printf("Container %s stopped\n", id);
+#include <pthread.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <sys/mount.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <sys/stat.h>
+#include <sys/resource.h>
+#include <sched.h>
+#include <sys/ioctl.h>
+#include "monitor_ioctl.h"
 
-      }
-    int main(int argc,char *argv[]){
-     if(argc <2){
-     printf("Usage:\n");
-    printf(" engine supervisor <rootfs>\n");
-     printf(" engine start <id> <rootfs> <cmd>\n");
-     printf(" engine ps\n");
-     printf(" engine stop <id>\n");
-     return 1;
-     }
-      if(strcmp(argv[1], "supervisor") == 0){
-        run_supervisor(argv[2]);
-      }else if(strcmp(argv[1],"start") == 0){
-        start_container(argv[2],argv[3],argv[4]);
-      }else if(strcmp(argv[1], "ps")== 0){
-      show_ps();
-      }else if(strcmp(argv[1], "stop") ==0){
-      stop_container(argv[2]);
-      }else{
-            printf("unknown command\n");
-            }
-            return 0;
-            }
-    
+#define MAX_CONTAINERS 16
+#define STACK_SIZE (1024*1024)
+#define SOCK_PATH "/tmp/engine.sock"
+#define LOG_DIR "/tmp/engine_logs"
+
+typedef enum { ST_EMPTY=0, ST_RUNNING, ST_STOPPED } CState;
+
+typedef struct {
+    char id[64];
+    pid_t pid;
+    CState state;
+    char logfile[256];
+    int pipe_fd;
+    pthread_t tid;
+} Container;
+
+static Container g_con[MAX_CONTAINERS];
+static pthread_mutex_t mu = PTHREAD_MUTEX_INITIALIZER;
+
+/* ---------- log thread ---------- */
+static void *reader(void *arg) {
+    Container *c = arg;
+    char buf[1024];
+    FILE *f = fopen(c->logfile,"a");
+
+    while (1) {
+        int n = read(c->pipe_fd, buf, sizeof(buf)-1);
+        if (n <= 0) break;
+        buf[n]=0;
+        fputs(buf,f);
+        fflush(f);
+    }
+    fclose(f);
+    return NULL;
+}
+
+/* ---------- child ---------- */
+static int child(void *arg) {
+    int *fd = arg;
+    dup2(fd[1],1);
+    dup2(fd[1],2);
+    close(fd[0]);
+    close(fd[1]);
+
+    execl("/bin/sh","sh","-c","/bin/ls",NULL);
+    return 0;
+}
+
+/* ---------- start ---------- */
+void start_container() {
+    int fd[2];
+    pipe(fd);
+
+    char *stack = malloc(STACK_SIZE);
+
+    pid_t pid = clone(child, stack+STACK_SIZE,
+        CLONE_NEWPID|SIGCHLD, fd);
+
+    Container *c = &g_con[0];
+    strcpy(c->id,"c1");
+    c->pid = pid;
+    c->state = ST_RUNNING;
+    c->pipe_fd = fd[0];
+    sprintf(c->logfile,"%s/c1.log",LOG_DIR);
+
+    pthread_create(&c->tid,NULL,reader,c);
+}
+
+/* ---------- main ---------- */
+int main(int argc,char *argv[]) {
+
+    mkdir(LOG_DIR,0755);
+
+    if(argc<2){
+        printf("usage: ./engine supervisor\n");
+        return 0;
+    }
+
+    if(strcmp(argv[1],"supervisor")==0){
+
+        start_container();
+        wait(NULL);
+    }
+
+    return 0;
+}
