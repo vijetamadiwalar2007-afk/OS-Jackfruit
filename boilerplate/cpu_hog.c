@@ -1,50 +1,30 @@
-/*
- * cpu_hog.c - CPU-bound workload for scheduler experiments.
- *
- * Usage:
- *   /cpu_hog [seconds]
- *
- * The program burns CPU and prints progress once per second so students
- * can compare completion times and responsiveness under different
- * priorities or CPU-affinity settings.
- *
- * If you copy this binary into an Alpine rootfs, make sure it is built in a
- * format that can run there.
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-static unsigned int parse_seconds(const char *arg, unsigned int fallback)
-{
-    char *end = NULL;
-    unsigned long value = strtoul(arg, &end, 10);
+int main(int argc, char *argv[]) {
 
-    if (!arg || *arg == '\0' || (end && *end != '\0') || value == 0)
-        return fallback;
-    return (unsigned int)value;
-}
+    long iterations = argc > 1 ? atol(argv[1]) : 1000000000L;
 
-int main(int argc, char *argv[])
-{
-    const unsigned int duration = (argc > 1) ? parse_seconds(argv[1], 10) : 10;
-    const time_t start = time(NULL);
-    time_t last_report = start;
-    volatile unsigned long long accumulator = 0;
+    printf("cpu_burn: starting %ld iterations\n", iterations);
+    fflush(stdout);
 
-    while ((unsigned int)(time(NULL) - start) < duration) {
-        accumulator = accumulator * 1664525ULL + 1013904223ULL;
+    struct timespec start, end;
+    clock_gettime(CLOCK_MONOTONIC, &start);
 
-        if (time(NULL) != last_report) {
-            last_report = time(NULL);
-            printf("cpu_hog alive elapsed=%ld accumulator=%llu\n",
-                   (long)(last_report - start),
-                   accumulator);
-            fflush(stdout);
-        }
+    volatile long x = 0;
+
+    for (long i = 0; i < iterations; i++) {
+        x = x * 1000003 + 1;
     }
 
-    printf("cpu_hog done duration=%u accumulator=%llu\n", duration, accumulator);
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    double elapsed = (end.tv_sec - start.tv_sec) +
+                     (end.tv_nsec - start.tv_nsec) / 1e9;
+
+    printf("cpu_burn: done in %.2f seconds\n", elapsed);
+    fflush(stdout);
+
     return 0;
 }
