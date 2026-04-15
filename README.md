@@ -1,4 +1,4 @@
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/e0e57e97-c77e-400e-bf97-9a96624a572b" /># Multi-Container Runtime
+# Multi-Container Runtime
 
 ## 1. Team Information
 
@@ -100,24 +100,28 @@ Two containers (alpha, beta) running simultaneously under one supervisor process
 
 (Terminal 1)
 
-<img width="840" height="175" alt="Screenshot 2026-04-15 095925" src="https://github.com/user-attachments/assets/efb4690e-2d2e-4a25-b596-8d26a2616f70" />
+<img width="935" height="144" alt="image" src="https://github.com/user-attachments/assets/20ccd869-1a64-40b9-bfde-75bfcb6f3595" />
+
 
 (Terminal 2)
 
-<img width="1050" height="95" alt="WhatsApp Image 2026-04-14 at 12 12 22 PM" src="https://github.com/user-attachments/assets/a48265d5-7deb-4e5c-abd7-9bbfc62238d1" />
+
+<img width="914" height="233" alt="image" src="https://github.com/user-attachments/assets/b596ff10-559b-4a02-a22c-636e23d8c71e" />
+
 
 
 ### Screenshot 2 — Metadata tracking
 Output of `engine ps` showing container ID, PID, state, soft/hard limits, and log file path.
 
-<img width="938" height="220" alt="WhatsApp Image 2026-04-15 at 11 44 12 AM" src="https://github.com/user-attachments/assets/c5feeb0d-656c-4349-81f2-d15d9a173467" />
+<img width="507" height="136" alt="image" src="https://github.com/user-attachments/assets/ef59606f-0380-4a7d-a527-b3c85ecc9690" />
+
+
+
+
 
 ### Screenshot 3 — Bounded-buffer logging
 Log file contents captured through the producer-consumer logging pipeline.
-
-
-<img width="921" height="238" alt="WhatsApp Image 2026-04-15 at 11 46 55 AM" src="https://github.com/user-attachments/assets/8547e365-62a8-4693-9c05-ea59843b9b52" />
-
+<img width="507" height="106" alt="image" src="https://github.com/user-attachments/assets/0be7aed0-43df-4dab-805f-415a79f64fd5" />
 
 ### Screenshot 4 — CLI and IPC
 A CLI `stop` command sent to the supervisor over a UNIX domain socket, with the supervisor responding.
@@ -137,7 +141,9 @@ A CLI `stop` command sent to the supervisor over a UNIX domain socket, with the 
 
 ### Screenshot 6 — Hard-limit enforcement
 `dmesg` output showing SIGKILL sent when a container exceeds its hard memory limit, with `ps` showing state as `killed`.
-<img width="1228" height="239" alt="WhatsApp Image 2026-04-15 at 12 00 18 PM" src="https://github.com/user-attachments/assets/d911eb70-db5c-4b04-ad33-eb18f19fc65e" />
+
+<img width="1248" height="427" alt="image" src="https://github.com/user-attachments/assets/c28ef9c3-a24f-473e-bf8a-0d5e5bc3d20d" />
+
 
 
 
