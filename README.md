@@ -1,4 +1,4 @@
-# Multi-Container Runtime
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/e0e57e97-c77e-400e-bf97-9a96624a572b" /># Multi-Container Runtime
 
 ## 1. Team Information
 
@@ -99,55 +99,61 @@ sudo dmesg | tail -3
 Two containers (alpha, beta) running simultaneously under one supervisor process.
 
 (Terminal 1)
-<img width="940" height="109" alt="image" src="https://github.com/user-attachments/assets/ae54ae51-a2ee-4f68-a090-4aad7f407dd1" />
+
+<img width="840" height="175" alt="Screenshot 2026-04-15 095925" src="https://github.com/user-attachments/assets/efb4690e-2d2e-4a25-b596-8d26a2616f70" />
 
 (Terminal 2)
-<img width="940" height="53" alt="image" src="https://github.com/user-attachments/assets/edeacf3e-49d6-479c-86d2-28c9be47041e" />
-<img width="940" height="54" alt="image" src="https://github.com/user-attachments/assets/d2452ff0-3edc-4dd3-a888-32d1307b972d" />
+
+<img width="1050" height="95" alt="WhatsApp Image 2026-04-14 at 12 12 22 PM" src="https://github.com/user-attachments/assets/a48265d5-7deb-4e5c-abd7-9bbfc62238d1" />
 
 
 ### Screenshot 2 — Metadata tracking
 Output of `engine ps` showing container ID, PID, state, soft/hard limits, and log file path.
 
-<img width="940" height="137" alt="image" src="https://github.com/user-attachments/assets/3e3c76a0-3e29-4712-a33b-b937656ae3e7" />
-
+<img width="938" height="220" alt="WhatsApp Image 2026-04-15 at 11 44 12 AM" src="https://github.com/user-attachments/assets/c5feeb0d-656c-4349-81f2-d15d9a173467" />
 
 ### Screenshot 3 — Bounded-buffer logging
 Log file contents captured through the producer-consumer logging pipeline.
 
-<img width="940" height="127" alt="image" src="https://github.com/user-attachments/assets/81d5e823-9451-40af-ad97-3d55833715e9" />
+
+<img width="921" height="238" alt="WhatsApp Image 2026-04-15 at 11 46 55 AM" src="https://github.com/user-attachments/assets/8547e365-62a8-4693-9c05-ea59843b9b52" />
 
 
 ### Screenshot 4 — CLI and IPC
 A CLI `stop` command sent to the supervisor over a UNIX domain socket, with the supervisor responding.
 
-<img width="940" height="71" alt="image" src="https://github.com/user-attachments/assets/c4de543c-5696-4981-9aad-57d7b136c404" />
-<img width="940" height="142" alt="image" src="https://github.com/user-attachments/assets/1fa175e2-64dd-417d-9f1e-1d42f681d67e" />
+
+<img width="1108" height="84" alt="WhatsApp Image 2026-04-15 at 11 59 18 AM" src="https://github.com/user-attachments/assets/182d7fb6-9164-4334-89b5-40268dc475ea" />
+
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/c9aa1066-6af1-4a13-aa65-df037ebcb3c7" />
 
 
 ### Screenshot 5 — Soft-limit warning
 `dmesg` output showing the kernel module warning when a container exceeds its soft memory limit.
 
-<img width="940" height="187" alt="image" src="https://github.com/user-attachments/assets/00d5c3fb-4af0-44f9-98cf-41e458dfbe4c" />
+
+<img width="1228" height="239" alt="WhatsApp Image 2026-04-15 at 12 00 18 PM" src="https://github.com/user-attachments/assets/5febe3ae-3a78-4c4f-b3d4-a6232704d3f0" />
 
 
 ### Screenshot 6 — Hard-limit enforcement
 `dmesg` output showing SIGKILL sent when a container exceeds its hard memory limit, with `ps` showing state as `killed`.
+<img width="1228" height="239" alt="WhatsApp Image 2026-04-15 at 12 00 18 PM" src="https://github.com/user-attachments/assets/d911eb70-db5c-4b04-ad33-eb18f19fc65e" />
 
-<img width="940" height="178" alt="image" src="https://github.com/user-attachments/assets/391349b2-530c-4be1-a430-63acd7371181" />
 
 
 ### Screenshot 7 — Scheduling experiment
 Log output from two containers running the same CPU workload at different nice values (-5 vs 10), showing different completion times.
 
-<img width="940" height="87" alt="image" src="https://github.com/user-attachments/assets/ac205e39-84a7-4d33-af9d-0bd3969037f5" />
-<img width="940" height="92" alt="image" src="https://github.com/user-attachments/assets/afbfe4d7-3c3c-4174-8dc4-dcc50c086b98" />
+<img width="942" height="166" alt="image" src="https://github.com/user-attachments/assets/00e95f57-d885-40a4-81f3-8ba32a75091d" />
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/cf6a755e-d12b-4347-b950-52ef924fbd9d" />
+
+
 
 
 ### Screenshot 8 — Clean teardown
 `ps aux` showing no zombie engine processes, and `dmesg` confirming clean module unload.
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/e663dd24-951e-4d95-adc3-f88e9ae38b2f" />
 
-<img width="940" height="198" alt="image" src="https://github.com/user-attachments/assets/740be717-6f15-4a32-898c-8d92d6145a3b" />
 
 
 ---
